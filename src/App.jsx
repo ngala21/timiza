@@ -6,7 +6,7 @@ import "./App.css";
 
 const apiKey = import.meta.env.VITE_IMDB_API_KEY;
 
-const API_URL = `http://www.omdbapi.com?apikey=${apiKey}`;
+const API_URL = `https://www.omdbapi.com?apikey=${apiKey}`;
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,6 +16,7 @@ const App = () => {
     const response = await fetch(`${API_URL}&s=${title}`);
     const data = await response.json();
 
+    // fixed duplicate UI cards"
     if (data.Search) {
       const unique = [
         ...new Map(data.Search.map((m) => [m.imdbID, m])).values(),
