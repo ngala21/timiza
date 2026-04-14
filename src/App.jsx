@@ -4,9 +4,9 @@ import MovieCard from "./MovieCard";
 import SearchIcon from "./search.svg";
 import "./App.css";
 
-import.meta.env.VITE_IMDB_API_KEY;
+const apiKey = import.meta.env.VITE_IMDB_API_KEY;
 
-const API_URL = import.meta.env.VITE_IMDB_API_KEY;
+const API_URL = `http://www.omdbapi.com?apikey=${apiKey}`;
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,7 +16,18 @@ const App = () => {
     const response = await fetch(`${API_URL}&s=${title}`);
     const data = await response.json();
 
-    setMovies(data.Search);
+    if (data.Search) {
+      const unique = [
+        ...new Map(data.Search.map((m) => [m.imdbID, m])).values(),
+      ];
+
+      setMovies(unique);
+    } else {
+      setMovies([]);
+    }
+    // setMovies(data.Search || []);
+    // Used this for testing + debugging only..
+    // console.log(data.Search);
   };
 
   useEffect(() => {
@@ -49,7 +60,7 @@ const App = () => {
       {movies?.length > 0 ? (
         <div className="container">
           {movies.map((movie) => (
-            <MovieCard movie={movie} />
+            <MovieCard key={movie.imdbID} movie={movie} />
           ))}
         </div>
       ) : (
